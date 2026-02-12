@@ -1,8 +1,8 @@
-import React from 'react';
+import { getWhatsAppLink } from '../config/contact';
 
 const WhatsAppButton: React.FC = () => {
     // Primary phone number for WhatsApp
-    const whatsappUrl = "https://wa.me/919850319154?text=Hello%20Swastah%2C%20I%20want%20to%20order%20Swastah%20Curcumin%20sachets";
+    const whatsappUrl = getWhatsAppLink();
 
     return (
         <a

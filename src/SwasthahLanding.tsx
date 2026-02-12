@@ -3,15 +3,21 @@ import meditationImg from "./assets/images/meditation.png";
 import nutraceuticalsImg from "./assets/nutraceuticals.png";
 import functionalFoodImg from "./assets/functional_food.jpeg";
 import logo from "./assets/logo1.png";
+import curcuminImg from "./assets/curcumin.png";
+import turmericRootImg from "./assets/turmeric_root.jpg";
+import sachet500Img from "./assets/sachet500.jpeg";
+import herpesImg from "./assets/herpes.png";
 import WhatsAppButton from "./components/WhatsAppButton";
 import Footer from "./components/Footer";
 import { Menu, X } from "lucide-react";
 
 
 
+import { getWhatsAppLink } from "./config/contact";
+
 // Common WhatsApp CTA Component
 const WhatsAppCTA = ({ text = "Order on WhatsApp", className = "" }: { text?: string; className?: string }) => {
-  const whatsappLink = "https://wa.me/919850319154?text=Hello%20Swastah%2C%20I%20want%20to%20order%20Swastah%20Curcumin%20sachets";
+  const whatsappLink = getWhatsAppLink();
 
   return (
     <a
@@ -320,7 +326,7 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
               <div className="absolute -top-6 -left-6 w-24 h-24 bg-amber-200/40 rounded-full filter blur-2xl"></div>
               <div className="relative rounded-4xl overflow-hidden shadow-2xl">
                 <img
-                  src="/src/assets/curcumin.png"
+                  src={curcuminImg}
                   alt="Curcumin molecular structure"
                   className="w-full h-[400px] object-cover transform hover:scale-105 transition-transform duration-700"
                 />
@@ -386,7 +392,7 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
           <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-500">
             <div className="relative h-[300px] rounded-3xl overflow-hidden shadow-xl">
               <img
-                src="/src/assets/turmeric_root.jpg"
+                src={turmericRootImg}
                 alt="Fresh turmeric root"
                 className="w-full h-full object-cover"
               />
@@ -710,7 +716,7 @@ const AboutProduct = ({
                 <span className="text-emerald-800 font-medium text-sm">100% Natural</span>
               </div>
               <img
-                src="/src/assets/sachet500.jpeg"
+                src={sachet500Img}
                 alt="Swastah Curcumin 90 Sachets"
                 className="w-full h-auto max-h-96 object-contain"
               />
@@ -719,7 +725,7 @@ const AboutProduct = ({
             {/* Secondary Image - Turmeric Root */}
             <div className="relative rounded-3xl overflow-hidden border border-gray-200/80 shadow-lg h-64">
               <img
-                src="/src/assets/herpes.png"
+                src={herpesImg}
                 alt="Fresh turmeric rhizome"
                 className="w-full h-full object-cover"
               />

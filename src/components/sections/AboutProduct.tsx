@@ -1,4 +1,5 @@
-
+import sachet500Img from "../../assets/sachet500.jpeg";
+import herpesImg from "../../assets/herpes.png";
 
 interface OurProductProps {
     whatsappLink?: string;
@@ -33,7 +34,7 @@ const OurProduct = ({
                                 <span className="text-emerald-800 font-medium text-sm">100% Natural</span>
                             </div>
                             <img
-                                src="/src/assets/sachet500.jpeg"
+                                src={sachet500Img}
                                 alt="Swastah Curcumin 90 Sachets"
                                 className="w-full h-auto max-h-96 object-contain"
                             />
@@ -42,7 +43,7 @@ const OurProduct = ({
                         {/* Secondary Image - Turmeric Root */}
                         <div className="relative rounded-3xl overflow-hidden border border-gray-200/80 shadow-lg h-64">
                             <img
-                                src="/src/assets/herpes.png"
+                                src={herpesImg}
                                 alt="Fresh turmeric rhizome"
                                 className="w-full h-full object-cover"
                             />
