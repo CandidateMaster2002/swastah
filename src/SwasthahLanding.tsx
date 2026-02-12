@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import meditationImg from "./assets/images/meditation.png";
 import nutraceuticalsImg from "./assets/nutraceuticals.png";
 import functionalFoodImg from "./assets/functional_food.jpeg";
@@ -33,31 +34,61 @@ import {
 
 // Common WhatsApp CTA Component
 const WhatsAppCTA = ({
-  text = "Contact Us",
+  text,
   className = "",
 }: {
-  text?: string;
+  text: string;
   className?: string;
 }) => {
-  const whatsappLink = getWhatsAppLink();
+  const ref = useRef<HTMLAnchorElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150 };
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    const distanceX = clientX - centerX;
+    const distanceY = clientY - centerY;
+
+    // Magnetic pull strength
+    x.set(distanceX * 0.35);
+    y.set(distanceY * 0.35);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
-    <a
-      href={whatsappLink}
+    <motion.a
+      ref={ref}
+      href={getWhatsAppLink()}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center gap-3 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x: springX, y: springY }}
+      className={`relative inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-bold py-5 px-12 rounded-full transition-all duration-300 shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.4)] overflow-hidden group outline-none ring-offset-2 focus:ring-2 focus:ring-emerald-500 ${className}`}
     >
-      {/* Icon */}
-      <img
-        src={WhatsAppSvg}
-        alt="WhatsApp"
-        className="w-8 h-8 object-contain"
-      />
+      {/* Premium Shimmer Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-shimmer" />
 
-      {/* Text */}
-      <span className="text-lg">{text}</span>
-    </a>
+      {/* Decorative Glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full blur opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+
+      <svg className="w-6 h-6 relative z-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72 1.189 7.221 4.316 11.103 4.316h.005c6.554 0 11.89-5.335 11.893-11.893 0-3.178-1.237-6.165-3.483-8.411z" />
+      </svg>
+      <span className="relative z-10 text-lg uppercase tracking-wider">{text}</span>
+    </motion.a>
   );
 };
 
@@ -124,14 +155,14 @@ const Header = () => {
   return (
     <header
       className={`fixed top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300 
-      ${isScrolled ? 'left-0 right-0 h-16' : 'left-0 right-0 h-24 md:h-[96px]'}`}
+      ${isScrolled ? 'left-0 right-0 h-16' : 'left-0 right-0 h-24 md:h-[124px]'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex justify-between items-center h-full">
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer py-1" onClick={scrollToTop}>
             <img
-              className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-12' : 'h-24 md:h-32'}`}
+              className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-12' : 'h-28 md:h-48'}`}
               src={logo}
               alt="Swasthah Logo"
             />
@@ -202,50 +233,136 @@ interface HeroProps {
 }
 
 const Hero = ({ ctaText }: HeroProps) => {
-  return (
+  const titleLetters = HERO_CONTENT.title.split("");
+  const subtitleWords = HERO_CONTENT.subtitle.split(" ");
 
+  const containerVars = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const letterVars = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+  };
+
+  const staggerContainer = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.8,
+      },
+    }
+  };
+
+  const fadeUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8 }
+  };
+
+  return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-green-800 to-emerald-900 overflow-hidden py-20 pt-32">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMjAgMzBhMTAgMTAgMCAwIDEgMC0yMCAxMCAxMCAwIDAgMSAwIDIweiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==')] bg-repeat opacity-20"></div>
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-4 text-center">
-        <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000">
-          <h1 className="text-7xl md:text-9xl font-black text-white tracking-tight mb-6 drop-shadow-2xl animate-float">
-            {HERO_CONTENT.title}
-          </h1>
-          <div className="w-24 h-1 bg-amber-400 mx-auto mb-8"></div>
-          <p className="text-3xl md:text-4xl text-white font-semibold max-w-4xl mx-auto leading-tight">
-            {HERO_CONTENT.subtitle}
-          </p>
-          <p className="text-xl md:text-2xl text-amber-100 max-w-3xl mx-auto leading-relaxed mt-4">
+        <motion.div
+          initial="initial"
+          animate="animate"
+          className="fade-section"
+        >
+          <motion.h1
+            variants={containerVars}
+            className="text-7xl md:text-9xl font-black text-white tracking-tight mb-6 drop-shadow-2xl"
+          >
+            {titleLetters.map((letter, idx) => (
+              <motion.span key={idx} variants={letterVars} className="inline-block">
+                {letter}
+              </motion.span>
+            ))}
+          </motion.h1>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "96px" }}
+            transition={{ duration: 1, delay: 1 }}
+            className="h-1 bg-amber-400 mx-auto mb-8"
+          ></motion.div>
+
+          <motion.p
+            variants={staggerContainer}
+            className="text-3xl md:text-4xl text-white font-semibold max-w-4xl mx-auto leading-tight"
+          >
+            {subtitleWords.map((word, idx) => (
+              <motion.span key={idx} variants={letterVars} className="inline-block mr-[0.25em]">
+                {word}
+              </motion.span>
+            ))}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.5 }}
+            className="text-xl md:text-2xl text-amber-100 max-w-3xl mx-auto leading-relaxed mt-4"
+          >
             {HERO_CONTENT.description}
-          </p>
-          <div className="mt-8 space-y-2">
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2 }}
+            className="mt-8 space-y-2"
+          >
             <p className="text-lg md:text-xl text-amber-300 font-medium">
               {HERO_CONTENT.bioAvailability}
             </p>
             <p className="text-lg md:text-xl text-white/80">
               {HERO_CONTENT.noAdditives}
             </p>
-          </div>
-          <p className="text-lg text-amber-200/90 mt-6 italic">
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 2.5 }}
+            className="text-lg text-amber-200/90 mt-6 italic"
+          >
             {HERO_CONTENT.onTheGo}
-          </p>
-          <div className="mt-12 mb-12">
-            <div className="mt-12 mb-12">
-              <WhatsAppCTA text={ctaText} className="px-12 py-5 text-xl bg-amber-500 hover:bg-amber-600 border-2 border-transparent hover:border-amber-300" />
-            </div>
-          </div>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 3 }}
+            className="mt-12 mb-12"
+          >
+            <WhatsAppCTA text={ctaText} className="px-12 py-5 text-xl bg-amber-500 hover:bg-amber-600 border-2 border-transparent hover:border-amber-300" />
+          </motion.div>
 
           {/* Meditation Image */}
-          <div className="flex justify-center mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 3.5 }}
+            className="flex justify-center mt-8"
+          >
             <img
               src={meditationImg}
               alt="Meditation and Wellness"
               className="w-full max-w-md md:max-w-lg h-auto rounded-[2.5rem] border-4 border-amber-200/20 shadow-2xl transition-transform duration-500 hover:scale-105"
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent"></div>
     </section>
@@ -281,7 +398,14 @@ const Nutraceuticals = ({ ctaText }: NutraceuticalsProps) => {
           {/* Content Column */}
           <div className="space-y-8">
             {NUTRACEUTICALS_CONTENT.map((item, index) => (
-              <div key={index} className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-300 group">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="group"
+              >
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-green-100 hover:border-green-300">
                   <div className="flex items-start gap-6">
                     <div className={`shrink-0 w-14 h-14 bg-gradient-to-br ${item.iconType === 'wellness' ? 'from-green-600 to-emerald-600' : 'from-amber-500 to-yellow-500'} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md`}>
@@ -301,7 +425,7 @@ const Nutraceuticals = ({ ctaText }: NutraceuticalsProps) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -548,18 +672,22 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
 
         </div>
 
-        <div className="mt-32 fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-600">
+        <div className="mt-32">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {HEALTH_BENEFITS_GRID.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-gradient-to-br from-white to-gray-50 p-5 rounded-2xl border border-gray-200 hover:border-emerald-200 hover:shadow-lg transition-all duration-300 group"
               >
                 <div className="w-10 h-10 bg-emerald-100 rounded-full mb-3 flex items-center justify-center group-hover:bg-emerald-200 transition-colors text-xl">
                   {item.emoji}
                 </div>
                 <p className="text-gray-800 font-medium text-sm leading-tight">{item.text}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -593,14 +721,16 @@ const FunctionalFood = () => {
 
         {/* Grid */}
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-
           {conditions.map((item, index) => (
-            <div
+            <motion.div
               key={index}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, delay: index * 0.15 }}
               className="relative group p-[1px] rounded-3xl bg-gradient-to-br from-green-200/40 via-white to-yellow-200/40 transition-all duration-700 hover:scale-[1.03]"
             >
               <div className="h-full bg-white/70 backdrop-blur-xl rounded-3xl p-10 border border-white/40 shadow-[0_20px_60px_rgba(0,0,0,0.08)] group-hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] transition-all duration-700">
-
                 {/* Icon Circle */}
                 <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 text-3xl mb-8 shadow-inner">
                   {item.icon}
@@ -615,11 +745,9 @@ const FunctionalFood = () => {
                 <p className="text-gray-600 leading-relaxed text-sm md:text-base">
                   {item.content}
                 </p>
-
               </div>
-            </div>
+            </motion.div>
           ))}
-
         </div>
 
         {/* CTA Strip */}
@@ -857,6 +985,12 @@ const SwastahLanding = () => {
 
       <style dangerouslySetInnerHTML={{
         __html: `
+        @keyframes shimmer {
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 1.5s infinite;
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-20px); }

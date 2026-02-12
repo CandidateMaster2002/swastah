@@ -127,6 +127,7 @@ export const INSTRUCTIONS_DATA = {
         "Do not heat or boil, can mix with warm food, not to put when food is cooking on gas.",
         "Best way to consume is by making paste in cow ghee and adding to food.",
         "Expect results on prolong usage of 7 -8 months only.",
+        "Refer to the instruction leaflet inside the pack for detailed dosage and precautions.",
     ],
     note: "Highly pigmented natural molecule that gets flush out in form of body fluids like sweat urine etc hence do not panic in case of yellow sweat or urine during initial days of consumption.",
 };
