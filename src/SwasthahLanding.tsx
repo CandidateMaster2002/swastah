@@ -11,10 +11,25 @@ import WhatsAppButton from "./components/WhatsAppButton";
 import Footer from "./components/Footer";
 import { Menu, X } from "lucide-react";
 import WhatsAppSvg from "./assets/whatsapp_svg.svg";
+import SectionHeading from "./components/SectionHeading";
 
 
 
 import { getWhatsAppLink } from "./config/contact";
+import {
+  SITE_TEXT,
+  MENU_ITEMS,
+  HERO_CONTENT,
+  NUTRACEUTICALS_CONTENT,
+  ABOUT_CURCUMIN_CONTENT,
+  HOW_CURCUMIN_WORKS,
+  HEALTH_BENEFITS_GRID,
+  CONDITIONS,
+  PRODUCT_FORMATS,
+  PACKAGING_INFO,
+  INSTRUCTIONS_DATA,
+  PRECAUTIONS_DATA
+} from "./constants/siteData";
 
 // Common WhatsApp CTA Component
 const WhatsAppCTA = ({
@@ -52,21 +67,27 @@ const WhatsAppCTA = ({
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const menuItems = [
-    { name: "Nutraceuticals", id: "nutraceuticals" },
-    { name: "Curcumin", id: "about-curcumin" },
-    { name: "Science", id: "science" },
-    { name: "Benefits", id: "benefits" },
-    { name: "Product", id: "product" },
-    { name: "Usage", id: "usage" },
-  ];
+  const menuItems = MENU_ITEMS;
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = menuItems.map(item => document.getElementById(item.id));
+      // Handle scroll state for header design
+      setIsScrolled(window.scrollY > 20);
+
+      // Handle active section highlighting
       const scrollPosition = window.scrollY + 100; // Offset for header
 
+      // Check Hero Section explicitly
+      const heroSection = document.getElementById('hero');
+      if (heroSection && heroSection.offsetTop <= scrollPosition && (heroSection.offsetTop + heroSection.offsetHeight) > scrollPosition) {
+        setActiveSection('hero');
+        return;
+      }
+
+      // Check other sections
+      const sections = menuItems.map(item => document.getElementById(item.id));
       for (const section of sections) {
         if (section && section.offsetTop <= scrollPosition && (section.offsetTop + section.offsetHeight) > scrollPosition) {
           setActiveSection(section.id);
@@ -78,6 +99,15 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+    setIsMenuOpen(false);
+    setActiveSection('hero');
+  };
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -92,12 +122,19 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-40 shadow-sm border-b border-gray-100 transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24 md:h-[96px]">
+    <header
+      className={`fixed top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300 
+      ${isScrolled ? 'left-0 right-0 h-16' : 'left-0 right-0 h-24 md:h-[96px]'}`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+        <div className="flex justify-between items-center h-full">
           {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer py-2" onClick={() => scrollToSection('hero')}>
-            <img className="h-32 md:h-42 w-auto object-contain transition-all duration-300" src={logo} alt="Swasthah Logo" />
+          <div className="flex-shrink-0 cursor-pointer py-1" onClick={scrollToTop}>
+            <img
+              className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-12' : 'h-24 md:h-32'}`}
+              src={logo}
+              alt="Swasthah Logo"
+            />
           </div>
 
           {/* Desktop Menu */}
@@ -130,7 +167,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-100">
+        <div className="md:hidden bg-white border-b border-gray-100 absolute w-full left-0 top-full shadow-lg">
           <div className="px-4 pt-2 pb-6 space-y-1">
             {menuItems.map((item) => (
               <button
@@ -174,25 +211,25 @@ const Hero = ({ ctaText }: HeroProps) => {
       <div className="relative z-10 mx-auto max-w-6xl px-4 text-center">
         <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000">
           <h1 className="text-7xl md:text-9xl font-black text-white tracking-tight mb-6 drop-shadow-2xl animate-float">
-            SWASTAH
+            {HERO_CONTENT.title}
           </h1>
           <div className="w-24 h-1 bg-amber-400 mx-auto mb-8"></div>
           <p className="text-3xl md:text-4xl text-white font-semibold max-w-4xl mx-auto leading-tight">
-            Pure Curcumin 95% in Its Natural Form
+            {HERO_CONTENT.subtitle}
           </p>
           <p className="text-xl md:text-2xl text-amber-100 max-w-3xl mx-auto leading-relaxed mt-4">
-            1 gm (1000mg) Highly Concentrated Curcumin with Pepper Powder
+            {HERO_CONTENT.description}
           </p>
           <div className="mt-8 space-y-2">
             <p className="text-lg md:text-xl text-amber-300 font-medium">
-              BioEnhanced. High Bioavailability.
+              {HERO_CONTENT.bioAvailability}
             </p>
             <p className="text-lg md:text-xl text-white/80">
-              No additives. No preservatives. No binding agents.
+              {HERO_CONTENT.noAdditives}
             </p>
           </div>
           <p className="text-lg text-amber-200/90 mt-6 italic">
-            Easy to use ON THE GO sachets.
+            {HERO_CONTENT.onTheGo}
           </p>
           <div className="mt-12 mb-12">
             <div className="mt-12 mb-12">
@@ -225,15 +262,7 @@ const Nutraceuticals = ({ ctaText }: NutraceuticalsProps) => {
     <section id="nutraceuticals" className="px-4 py-32 bg-gradient-to-br from-green-50 to-emerald-50 relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="mx-auto max-w-7xl relative z-10">
-        <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 text-center mb-20">
-          <span className="text-emerald-700 font-medium text-sm uppercase tracking-[0.25em] bg-emerald-50 px-5 py-2 rounded-full inline-block mb-6">
-            Science of Wellness
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Nutraceuticals
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-green-600 to-emerald-500 mx-auto rounded-full"></div>
-        </div>
+        <SectionHeading title="Nutraceuticals" />
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image Column */}
@@ -251,51 +280,29 @@ const Nutraceuticals = ({ ctaText }: NutraceuticalsProps) => {
 
           {/* Content Column */}
           <div className="space-y-8">
-            <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-300 group">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-green-100 hover:border-green-300">
-                <div className="flex items-start gap-6">
-                  <div className="shrink-0 w-14 h-14 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-5m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">What are Nutraceuticals?</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                      A nutraceutical product may be defined as a substance, which has
-                      physiological benefit or provides protection against chronic
-                      disease. Nutraceuticals may be used to improve health, delay the
-                      aging process, prevent and manage chronic diseases, increase life
-                      expectancy, or support the structure or function of the body.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-400 group">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-green-100 hover:border-green-300">
-                <div className="flex items-start gap-6">
-                  <div className="shrink-0 w-14 h-14 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Why Nutraceuticals?</h3>
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                      Nutraceuticals induce targeted molecular therapy without causing
-                      side effects. When natural molecules are used your body absorbs
-                      and has mechanism to flush out of body the excess against the
-                      synthetically generated drugs due to which excess does not
-                      accumulate in the body to cause any side effects and hence
-                      Nutraceuticals when taken in recommended safe quantity for prolong
-                      period of time give you good result without side effects.
-                    </p>
+            {NUTRACEUTICALS_CONTENT.map((item, index) => (
+              <div key={index} className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-300 group">
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 border border-green-100 hover:border-green-300">
+                  <div className="flex items-start gap-6">
+                    <div className={`shrink-0 w-14 h-14 bg-gradient-to-br ${item.iconType === 'wellness' ? 'from-green-600 to-emerald-600' : 'from-amber-500 to-yellow-500'} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md`}>
+                      <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {item.iconType === 'wellness' ? (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-5m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        ) : (
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        )}
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
+                      <p className="text-gray-600 leading-relaxed text-lg">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -321,16 +328,7 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
 
       <div className="mx-auto max-w-7xl relative z-10">
         {/* Header Section */}
-        <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 max-w-4xl">
-          <span className="text-emerald-700 font-medium text-sm uppercase tracking-[0.25em] bg-emerald-50/80 px-5 py-2 rounded-full inline-block mb-6">
-            Science of Well-being
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            The <span className="text-emerald-700">Curcumin</span><br />
-            <span className="text-gray-600 font-light">molecular wisdom</span>
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-amber-400 to-emerald-500 rounded-full mt-2"></div>
-        </div>
+        <SectionHeading title="The Curcumin Molecule" />
 
         {/* Hero Image + Intro */}
         <div className="grid lg:grid-cols-2 gap-16 mt-20">
@@ -368,21 +366,23 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
           <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-400 flex flex-col justify-center">
             <div className="bg-gradient-to-br from-emerald-50/50 to-amber-50/30 p-8 rounded-4xl border border-emerald-100/50">
               <h3 className="text-3xl font-semibold text-gray-900 mb-6">
-                Curcumin,<br />
-                <span className="text-emerald-700">a polyphenol.</span>
+                {ABOUT_CURCUMIN_CONTENT.introTitle.split(',').map((part, idx) => (
+                  <span key={idx}>
+                    {part}{idx === 0 && <>,<br /></>}
+                    {idx === 1 && <span className="text-emerald-700">{part}</span>}
+                  </span>
+                ))}
               </h3>
               <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                Curcumin is the active compound in turmeric.
+                {ABOUT_CURCUMIN_CONTENT.introDescription}
               </p>
               <div className="space-y-4 text-gray-600">
-                <p className="flex items-start gap-3">
-                  <span className="text-emerald-600 text-lg">•</span>
-                  <span>Curcumin molecule is hydrophobic — meaning does not dissolve in water. Curcumin is fat and alcohol soluble.</span>
-                </p>
-                <p className="flex items-start gap-3">
-                  <span className="text-emerald-600 text-lg">•</span>
-                  <span>Curcumin is not water soluble.</span>
-                </p>
+                {ABOUT_CURCUMIN_CONTENT.points.map((point, idx) => (
+                  <p key={idx} className="flex items-start gap-3">
+                    <span className="text-emerald-600 text-lg">•</span>
+                    <span>{point}</span>
+                  </p>
+                ))}
               </div>
             </div>
           </div>
@@ -425,9 +425,8 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
         <div className="mt-32 grid md:grid-cols-2 gap-12 items-center fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-800">
           <div className="bg-gradient-to-br from-emerald-900 to-green-800 p-10 rounded-4xl text-white">
             <div className="max-w-lg">
-              <span className="text-amber-300 text-sm font-semibold tracking-wider">ACCESSIBLE WELLNESS</span>
               <p className="text-2xl md:text-3xl font-light mt-4 leading-relaxed">
-                A relatively low dose of the complex can provide health benefits for people that do not have diagnosed health conditions.
+                {ABOUT_CURCUMIN_CONTENT.accessibleWellness}
               </p>
             </div>
           </div>
@@ -439,7 +438,7 @@ const AboutCurcumin = ({ ctaText }: AboutCurcuminProps) => {
               <h4 className="text-2xl font-semibold text-amber-900">Antioxidant & Anti-inflammatory</h4>
             </div>
             <p className="text-gray-800 text-lg">
-              Most of these benefits can be attributed to its antioxidant and anti-inflammatory effects.
+              {ABOUT_CURCUMIN_CONTENT.antioxidant}
             </p>
           </div>
         </div>
@@ -460,22 +459,14 @@ interface HowCurcuminWorksProps {
 
 const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorksProps) => {
   return (
-    <section id="science" className="px-4 py-24 bg-gradient-to-br from-white to-emerald-50/30 relative overflow-hidden">
+    <section id="science" className="px-4 py-24 bg-emerald-50 relative overflow-hidden">
       {/* Subtle background elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-amber-100/20 rounded-full filter blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-100/30 rounded-full filter blur-3xl"></div>
 
       <div className="mx-auto max-w-7xl relative z-10">
         {/* Header - Compact yet elegant */}
-        <div className="mb-12">
-          <span className="text-emerald-700 font-medium text-sm uppercase tracking-[0.25em] bg-emerald-50 px-5 py-2 rounded-full inline-block mb-6">
-            Cellular Intelligence
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            How <span className="bg-gradient-to-r from-emerald-800 to-amber-700 bg-clip-text text-transparent">Curcumin</span> Works
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full"></div>
-        </div>
+        <SectionHeading title="How Curcumin Works" />
 
         {/* Main content grid - Compact, visual, impactful */}
         <div className="grid lg:grid-cols-2 gap-8">
@@ -488,8 +479,13 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
                   <span className="text-emerald-700 text-xl">⚛️</span>
                 </div>
                 <div>
+                  <span className="font-semibold text-gray-900">Works at the Cellular Level</span>
                   <p className="text-gray-900 text-lg font-medium leading-relaxed">
-                    Curcumin works at <span className="text-emerald-700 font-semibold">cellular level</span> to target the signalling pathways to perform corrective measures.
+                    {HOW_CURCUMIN_WORKS.cellularLevel.split('cellular level').map((text, i) => (
+                      <span key={i}>
+                        {text}{i === 0 && <span className="text-emerald-700 font-semibold">cellular level</span>}
+                      </span>
+                    ))}
                   </p>
                 </div>
               </div>
@@ -502,7 +498,9 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
                   <span className="text-amber-600 text-lg">🔄</span>
                 </div>
                 <p className="text-gray-700 text-base leading-relaxed">
-                  <span className="font-semibold text-gray-900">Works specifically on certain signaling path systems</span> — correcting the signals that malfunction due to dietary habits and lifestyle issues. This malfunctioning is root cause for many chronic ailments.
+                  <span className="font-semibold text-gray-900">Corrects Malfunctioning Signals
+                    <br />
+                  </span>{HOW_CURCUMIN_WORKS.signals}
                 </p>
               </div>
             </div>
@@ -513,7 +511,9 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
                 <span className="text-emerald-600 text-sm">🎯</span>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed">
-                <span className="font-medium text-gray-900">Curcumin, a polyphenol</span> — has been shown to target multiple signaling molecules while also demonstrating activity at the cellular level.
+                <span className="font-semibold text-gray-900">Multi-Target Cellular Protection</span>
+                <br />
+                {HOW_CURCUMIN_WORKS.targeting}
               </p>
             </div>
 
@@ -549,31 +549,8 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
         </div>
 
         <div className="mt-32 fade-section opacity-0 translate-y-10 transition-all duration-1000 delay-600">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h3 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-              Curcumins contain<br />
-              <span className="font-bold bg-gradient-to-r from-emerald-800 to-amber-700 bg-clip-text text-transparent">
-                numerous medicinal values
-              </span>
-            </h3>
-            <p className="text-xl text-gray-600">
-              Including anti-oxidation and anti-inflammation — the foundation of cellular protection.
-            </p>
-          </div>
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { text: "Blood thinner", emoji: "🩸" },
-              { text: "Blood Purifier", emoji: "🌊" },
-              { text: "Anti Inflammatory", emoji: "🔥" },
-              { text: "Anti Cancer", emoji: "🎗️" },
-              { text: "Anti-oxidant", emoji: "🛡️" },
-              { text: "Helps ligament restoration", emoji: "🦵" },
-              { text: "Restores bone density", emoji: "🦴" },
-              { text: "Exerts antiviral effects", emoji: "🦠" },
-              { text: "Anti-pulmonary fibrosis", emoji: "🫁" },
-              { text: "COPD effects", emoji: "😮‍💨" }
-            ].map((item, index) => (
+            {HEALTH_BENEFITS_GRID.map((item, index) => (
               <div
                 key={index}
                 className="bg-gradient-to-br from-white to-gray-50 p-5 rounded-2xl border border-gray-200 hover:border-emerald-200 hover:shadow-lg transition-all duration-300 group"
@@ -599,42 +576,11 @@ const HowCurcuminWorks = ({ ctaText = "Discover the science" }: HowCurcuminWorks
 };
 
 // 7. FunctionalFood (DiseasesSection)
-const conditions = [
-  {
-    title: "Arthritis",
-    icon: "🦴",
-    content: "Curcumin (the active compound in turmeric) is quite well-studied for arthritis, especially because of its anti-inflammatory action.",
-  },
-  {
-    title: "Diabetes",
-    icon: "🩸",
-    content: "Curcumin helps diabetes in a root-cause way, not just by lowering sugar for a few hours. It targets inflammation, insulin resistance, oxidative stress, and β-cell damage. Curcumin helps diabetes by improving insulin sensitivity, reducing chronic inflammation, protecting pancreatic β-cells and reducing post-meal glucose spikes.",
-  },
-  {
-    title: "Asthma",
-    icon: "🌬️",
-    content: "Curcumin helps in asthma mainly by calming the root processes that drive airway narrowing and hypersensitivity—not by acting like a quick bronchodilator. Curcumin helps in asthma by reducing airway inflammation, preventing airway hyper-responsiveness, decreasing mucus overproduction and providing strong antioxidant protection.",
-  },
-  {
-    title: "Weight Loss",
-    icon: "⚖️",
-    content: "Curcumin supports weight loss by fixing underlying metabolic problems, not by forcing the scale down. Curcumin supports weight loss by reducing inflammation, improving insulin sensitivity, supporting fat metabolism and helping gut health.",
-  },
-  {
-    title: "Gut Health",
-    icon: "🌱",
-    content: "Curcumin is quietly excellent for gut health—not as a laxative or probiotic, but as a gut-lining healer + inflammation modulator. Curcumin is excellent for gut health by calming gut inflammation, repairing and strengthening the gut barrier and modulating the gut microbiome.",
-  },
-  {
-    title: "Cancer",
-    icon: "🧬",
-    content: "Curcumin fights cancer by switching off cancer survival signals, stopping uncontrolled cell division, forcing cancer cells into apoptosis, cutting off tumor blood supply and preventing metastasis. It is preventive and supportive and works best as part of an integrative approach.",
-  },
-];
+const conditions = CONDITIONS;
 
 const FunctionalFood = () => {
   return (
-    <section id="benefits" className="relative overflow-hidden py-32 px-6 md:px-16 bg-gradient-to-br from-white via-green-50/50 to-yellow-50/30">
+    <section id="benefits" className="relative overflow-hidden py-32 px-6 md:px-16 bg-white">
 
       {/* Ambient Glow Background */}
       <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-green-300/20 rounded-full blur-[120px]" />
@@ -643,16 +589,7 @@ const FunctionalFood = () => {
       <div className="relative max-w-7xl mx-auto">
 
         {/* Heading */}
-        <div className="text-center mb-20">
-          <h2 className="text-5xl md:text-6xl font-semibold text-gray-900 tracking-tight leading-tight">
-            Targeted Cellular Support
-          </h2>
-
-          <p className="mt-8 text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-            Curcumin works at cellular level and supports multiple chronic conditions
-            through its anti-inflammatory and antioxidant properties.
-          </p>
-        </div>
+        <SectionHeading title="Support Across Diseases" />
 
         {/* Grid */}
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
@@ -687,7 +624,7 @@ const FunctionalFood = () => {
 
         {/* CTA Strip */}
         <div className="mt-24 text-center">
-          <WhatsAppCTA text="Discuss Your Condition on WhatsApp" />
+          <WhatsAppCTA text="Contact Us" />
         </div>
 
       </div>
@@ -705,18 +642,10 @@ const AboutProduct = ({
 }: AboutProductProps) => {
 
   return (
-    <section id="product" className="py-24 bg-white">
+    <section id="product" className="py-24 bg-emerald-50">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-20">
-          <span className="text-emerald-700 font-medium text-sm uppercase tracking-[0.2em] bg-emerald-50/80 px-5 py-2.5 rounded-full inline-block mb-6">
-            Pure • Natural • Traditional
-          </span>
-          <h2 className="text-5xl md:text-6xl font-light text-gray-900 tracking-tight">
-            Our <span className="font-bold bg-gradient-to-r from-emerald-800 to-amber-700 bg-clip-text text-transparent">Curcumin</span>
-          </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full mx-auto mt-6"></div>
-        </div>
+        <SectionHeading title="Our Product" />
 
         {/* Main grid */}
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20">
@@ -725,9 +654,7 @@ const AboutProduct = ({
           <div className="space-y-8">
             {/* Hero Image - Sachet */}
             <div className="relative bg-gradient-to-br from-gray-50 to-white rounded-4xl border border-gray-200/80 p-8 shadow-xl">
-              <div className="absolute top-6 right-6 bg-emerald-100 px-4 py-2 rounded-full">
-                <span className="text-emerald-800 font-medium text-sm">100% Natural</span>
-              </div>
+
               <img
                 src={sachet500Img}
                 alt="Swastah Curcumin 90 Sachets"
@@ -743,11 +670,7 @@ const AboutProduct = ({
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent"></div>
-              <div className="absolute bottom-4 left-4">
-                <span className="text-white text-sm font-medium bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
-                  Pure rhizome • No additives
-                </span>
-              </div>
+
             </div>
           </div>
 
@@ -760,18 +683,12 @@ const AboutProduct = ({
                 Available Formats
               </h3>
               <div className="flex flex-wrap gap-4">
-                <div className="bg-emerald-50 px-6 py-4 rounded-2xl border border-emerald-200 flex-1 min-w-[140px]">
-                  <span className="block text-2xl font-bold text-emerald-800">90</span>
-                  <span className="text-gray-600 text-sm">Sachets</span>
-                </div>
-                <div className="bg-amber-50 px-6 py-4 rounded-2xl border border-amber-200 flex-1 min-w-[140px]">
-                  <span className="block text-2xl font-bold text-amber-800">295</span>
-                  <span className="text-gray-600 text-sm">Sachets</span>
-                </div>
-                <div className="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-200 flex-1 min-w-[140px]">
-                  <span className="block text-2xl font-bold text-gray-800">500 g</span>
-                  <span className="text-gray-600 text-sm">Bulk</span>
-                </div>
+                {PRODUCT_FORMATS.map((item, index) => (
+                  <div key={index} className={`${item.colorStyle === 'emerald' ? 'bg-emerald-50 border-emerald-200' : item.colorStyle === 'amber' ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'} px-6 py-4 rounded-2xl border flex-1 min-w-[140px]`}>
+                    <span className={`block text-2xl font-bold ${item.colorStyle === 'emerald' ? 'text-emerald-800' : item.colorStyle === 'amber' ? 'text-amber-800' : 'text-gray-800'}`}>{item.value}</span>
+                    <span className="text-gray-600 text-sm">{item.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -802,40 +719,17 @@ const AboutProduct = ({
                 Packaging
               </h3>
               <div className="space-y-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-emerald-700 text-xl">👜</span>
+                {PACKAGING_INFO.map((item, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-emerald-700 text-xl">{item.icon}</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800">{item.title}</p>
+                      <p className="text-gray-600 text-sm mt-1">{item.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Easy to use ON THE GO sachets</p>
-                    <p className="text-gray-600 text-sm mt-1">Travelling? or eating out in restaurant? Simply top your food with it.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-emerald-700 text-xl">🌍</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Eco friendly plastic free</p>
-                    <p className="text-gray-600 text-sm mt-1">Jute bag with paper poster stitched on it — not laminated.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Usage */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-3">
-                <span className="w-1.5 h-6 bg-amber-600 rounded-full"></span>
-                Usage
-              </h3>
-              <div className="bg-amber-50/70 p-5 rounded-xl border border-amber-200/50">
-                <p className="text-gray-700 font-medium">
-                  Kindly follow the instruction leaflet received with the product.
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  *Detailed dosage and precautions on the leaflet inside each pack
-                </p>
+                ))}
               </div>
             </div>
 
@@ -857,38 +751,13 @@ interface InstructionsPrecautionsProps {
 }
 
 const InstructionsPrecautions = ({ ctaText }: InstructionsPrecautionsProps) => {
-  const instructions = [
-    "Highly concentrated form, consume only one sachet at a time.",
-    "Up to 4 sachets can be consumed in a day at regular intervals.",
-    "Do not consume empty stomach.",
-    "Do not heat or boil, can mix with warm food, not to put when food is cooking on gas.",
-    "Best way to consume is by making paste in cow ghee and adding to food.",
-    "Expect results on prolong usage of 7 -8 months only.",
-  ];
-
-  const precautions = [
-    "Strictly follow the instructions listed.",
-    "It barely has any serious side effects as the excess will be flushed out.",
-    "In case of few boils or yellow sweat no need to worry in worst case can cause diarrhea.",
-    "In case of any reaction stop consumption and wait for reaction to subside.",
-    "Reactions are likely only in case of excessive consumption.",
-    "Those having thrombosis related issues or risk internal bleeding please be known that it is blood thinner.",
-    "Those planning for surgery stop usage before and after surgery until recovery.",
-    "Those undergoing chemotherapy can consume curcumin.",
-  ];
+  const instructions = INSTRUCTIONS_DATA.list;
+  const precautions = PRECAUTIONS_DATA;
 
   return (
-    <section id="usage" className="px-4 py-32 bg-gray-50">
+    <section id="usage" className="px-4 py-32 bg-white">
       <div className="mx-auto max-w-6xl">
-        <div className="fade-section opacity-0 translate-y-10 transition-all duration-1000 text-center mb-20">
-          <span className="text-emerald-700 font-medium text-sm uppercase tracking-[0.25em] bg-emerald-50 px-5 py-2 rounded-full inline-block mb-6">
-            Usage Guidelines
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Instructions & Precautions
-          </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
-        </div>
+        <SectionHeading title="Instructions & Precautions" />
 
         <div className="grid md:grid-cols-2 gap-16">
           {/* INSTRUCTIONS */}
@@ -912,7 +781,7 @@ const InstructionsPrecautions = ({ ctaText }: InstructionsPrecautionsProps) => {
               </ul>
               <div className="mt-8 p-6 bg-amber-50 rounded-2xl border border-amber-200">
                 <p className="text-amber-800">
-                  Highly pigmented natural molecule that gets flush out in form of body fluids like sweat urine etc hence do not panic in case of yellow sweat or urine during initial days of consumption.
+                  {INSTRUCTIONS_DATA.note}
                 </p>
               </div>
             </div>
@@ -952,7 +821,7 @@ const InstructionsPrecautions = ({ ctaText }: InstructionsPrecautionsProps) => {
 // --- Main Component ---
 
 const SwastahLanding = () => {
-  const ctaText = "Contact Us";
+  const ctaText = SITE_TEXT.cta;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
