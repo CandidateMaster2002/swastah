@@ -169,18 +169,32 @@ const Header = () => {
           </div>
 
           {/* Desktop Menu */}
-          <nav className="hidden md:flex space-x-1 lg:space-x-4">
-            {menuItems.map((item) => (
-              <button
+          <nav className="hidden md:flex items-center space-x-2">
+            {menuItems.map((item, index) => (
+              <motion.button
                 key={item.name}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 onClick={() => scrollToSection(item.id)}
-                className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeSection === item.id
-                  ? "text-emerald-700 bg-emerald-50"
-                  : "text-gray-600 hover:text-emerald-600 hover:bg-gray-50"
+                className={`relative px-4 py-2 text-sm font-semibold tracking-widest uppercase transition-colors duration-300 group ${activeSection === item.id
+                  ? "text-emerald-700"
+                  : "text-gray-500 hover:text-emerald-600"
                   }`}
               >
-                {item.name}
-              </button>
+                <span className="relative z-10">{item.name}</span>
+
+                {/* Horizontal Underline Animation */}
+                {activeSection === item.id ? (
+                  <motion.div
+                    layoutId="activeUnderline"
+                    className="absolute bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full"
+                    transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                  />
+                ) : (
+                  <div className="absolute bottom-1 left-1/2 w-0 h-0.5 bg-emerald-400 rounded-full transition-all duration-300 group-hover:w-4 group-hover:left-[calc(50%-8px)]" />
+                )}
+              </motion.button>
             ))}
           </nav>
 

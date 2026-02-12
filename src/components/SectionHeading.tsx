@@ -55,13 +55,15 @@ const SectionHeading = ({ title, highlight, description, className = "" }: Secti
                     </motion.span>
                 )}
             </motion.h2>
-            <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: "96px" }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.6 }}
-                className="h-1.5 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full mx-auto"
-            ></motion.div>
+            <div className="w-24 h-1.5 mx-auto relative">
+                <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full origin-center"
+                />
+            </div>
             {description && (
                 <motion.p
                     initial={{ opacity: 0 }}
