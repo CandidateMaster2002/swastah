@@ -613,11 +613,7 @@ const conditions = [
   },
 ];
 
-interface FunctionalFoodProps {
-  ctaText: string;
-}
-
-const FunctionalFood = ({ ctaText }: FunctionalFoodProps) => {
+const FunctionalFood = () => {
   return (
     <section id="benefits" className="relative overflow-hidden py-32 px-6 md:px-16 bg-gradient-to-br from-white via-green-50/50 to-yellow-50/30">
 
@@ -682,12 +678,10 @@ const FunctionalFood = ({ ctaText }: FunctionalFoodProps) => {
 
 // 8. AboutProduct
 interface AboutProductProps {
-  whatsappLink?: string;
   ctaText: string;
 }
 
 const AboutProduct = ({
-  whatsappLink = "https://wa.me/919850319154?text=Hello%20Swastah%2C%20I%20want%20to%20order%20Swastah%20Curcumin%20sachets",
   ctaText
 }: AboutProductProps) => {
 
@@ -968,7 +962,7 @@ const SwastahLanding = () => {
       <Nutraceuticals ctaText={ctaText} />
       <AboutCurcumin ctaText={ctaText} />
       <HowCurcuminWorks ctaText={ctaText} />
-      <FunctionalFood ctaText={ctaText} />
+      <FunctionalFood />
       <AboutProduct ctaText={ctaText} />
       <InstructionsPrecautions ctaText={ctaText} />
       <Footer />
